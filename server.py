@@ -7,13 +7,18 @@ import hashlib
 import sys
 import time
 
+if len(sys.argv) < 2:
+    print "Usage: ./server.py serverPort [timeout = 3]"
+    exit(1)
+
 # takes the port number as command line arguments and create server socket
 serverIP = "127.0.0.1"
-serverPort=int(sys.argv[1])
+serverPort = int(sys.argv[1])
+timeout =  float(sys.argv[2]) if len(sys.argv) > 2 else 3
 
 serverSocket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 serverSocket.bind((serverIP,serverPort))
-serverSocket.settimeout(3)
+serverSocket.settimeout(timeout)
 print "Ready to serve"
 
 # initializes packet variables
@@ -70,7 +75,7 @@ while True:
 			print "error detected"
 	except:
 		if endoffile:
-			if(time.time()-lastpktreceived>3):
+			if time.time() - lastpktreceived > timeout:
 				break
 
 

@@ -7,21 +7,27 @@ import pickle
 import sys
 import time
 
+if len(sys.argv) < 3:
+    print "Usage: ./client.py serverPort fileToUpload [windowSize = 7] [timeout = 0.01]"
+    exit(1)
+
+timeout = float(sys.argv[4]) if len(sys.argv) > 4 else 0.01
+
 #takes the port number as command line arguments
 serverName="127.0.0.1"
-serverPort=int(sys.argv[1])
+serverPort = int(sys.argv[1])
 
 #takes the file name as command line arguments
 filename = ''.join(sys.argv[2])
 
 #create client socket
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-clientSocket.settimeout(0.001)
+clientSocket.settimeout(timeout)
 
 #initializes window variables (upper and lower window bounds, position of next seq number)
 base=1
 nextSeqnum=1
-windowSize=7
+windowSize = int(sys.argv[3]) if len(sys.argv) > 3 else 7
 window = []
 
 #SENDS DATA
@@ -74,7 +80,7 @@ while not done or window:
 			print "error detected"
 #TIMEOUT
 	except:
-		if(time.time()-lastackreceived>0.01):
+		if time.time() - lastackreceived > timeout:
 			for i in window:
 				transmit(clientSocket, pickle.dumps(i), serverName, serverPort)
 

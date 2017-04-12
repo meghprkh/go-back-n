@@ -5,7 +5,7 @@ import pickle
 import sys
 import time
 from transmit import transmit
-from utilities import getHash, parseAndVerify
+from utilities import parseAndVerify, makeACK
 
 if len(sys.argv) < 2:
     print "Usage: ./server.py serverPort [timeout = 0.01]"
@@ -32,11 +32,6 @@ endoffile = False
 lastpktreceived = time.time()
 starttime = time.time()
 
-def makeACK(expectedseqnum):
-    sndpkt = []
-    sndpkt.append(expectedseqnum)
-    sndpkt.append(getHash(sndpkt))
-    return sndpkt
 
 while True:
 

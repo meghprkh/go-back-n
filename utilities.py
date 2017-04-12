@@ -15,3 +15,14 @@ def parseAndVerify(packet):
     del rcvpkt[-1]
     isCorrupt = getHash(rcvpkt) != c
     return rcvpkt, isCorrupt
+
+def makePkt(seqnum, data):
+    packet = [seqnum, data]
+    packet.append(getHash(packet))
+    return packet
+
+
+def makeACK(expectedseqnum):
+    packet = [expectedseqnum]
+    packet.append(getHash(packet))
+    return packet

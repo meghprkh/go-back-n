@@ -5,7 +5,7 @@ import pickle
 import sys
 import time
 from transmit import transmit
-from utilities import getHash, parseAndVerify
+from utilities import parseAndVerify, makePkt
 
 if len(sys.argv) < 3:
     print "Usage: ./client.py serverPort fileToUpload [windowSize = 7] [timeout = 0.01]"
@@ -36,11 +36,6 @@ fileOpen = open(filename, 'rb')
 data = fileOpen.read(500)
 done = False
 lastackreceived = time.time()
-
-def makePkt(seqnum, data):
-    packet = [seqnum, data]
-    packet.append(getHash(packet))
-    return packet
 
 while not done or window:
     # check if the window is full	or EOF has reached

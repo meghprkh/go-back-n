@@ -8,13 +8,13 @@ from transmit import transmit
 from utilities import getHash, parseAndVerify
 
 if len(sys.argv) < 2:
-    print "Usage: ./server.py serverPort [timeout = 3]"
+    print "Usage: ./server.py serverPort [timeout = 0.01]"
     exit(1)
 
 # takes the port number as command line arguments and create server socket
 serverIP = "127.0.0.1"
 serverPort = int(sys.argv[1])
-timeout = float(sys.argv[2]) if len(sys.argv) > 2 else 3
+timeout = float(sys.argv[2]) if len(sys.argv) > 2 else 0.01
 
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 serverSocket.bind((serverIP, serverPort))
@@ -72,7 +72,9 @@ while True:
             print "error detected"
     except:
         if endoffile:
-            if time.time() - lastpktreceived > timeout:
+            # if we dont recieve any packet for 3 seconds then we terminate
+            # as client would have terminated after sending the whole file
+            if time.time() - lastpktreceived > 3:
                 break
 
 

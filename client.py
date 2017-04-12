@@ -5,7 +5,7 @@ import pickle
 import sys
 import time
 from transmit import transmit
-from utilities import getHash
+from utilities import getHash, parseAndVerify
 
 if len(sys.argv) < 3:
     print "Usage: ./client.py serverPort fileToUpload [windowSize = 7] [timeout = 0.01]"
@@ -61,12 +61,8 @@ while not done or window:
     # RECEIPT OF AN ACK
     try:
         packet, serverAddress = clientSocket.recvfrom(4096)
-        rcvpkt = []
-        rcvpkt = pickle.loads(packet)
-        # check value of checksum received (c) against checksum calculated (h)
-        c = rcvpkt[-1]
-        del rcvpkt[-1]
-        if c == getHash(rcvpkt):
+        rcvpkt, isCorrupt = parseAndVerify(packet)
+        if not isCorrupt:
             # packet recieved not corrupt
             print "Received ack for", rcvpkt[0]
             # slide window and reset timer

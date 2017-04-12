@@ -5,7 +5,7 @@ import pickle
 import sys
 import time
 from transmit import transmit
-from utilities import getHash
+from utilities import getHash, parseAndVerify
 
 if len(sys.argv) < 2:
     print "Usage: ./server.py serverPort [timeout = 3]"
@@ -43,12 +43,8 @@ while True:
     try:
         rcvpkt = []
         packet, clientAddress = serverSocket.recvfrom(4096)
-        rcvpkt = pickle.loads(packet)
-        # check value of checksum received (c) against checksum calculated (h) -
-        # NOT CORRUPT
-        c = rcvpkt[-1]
-        del rcvpkt[-1]
-        if c == getHash(rcvpkt):
+        rcvpkt, isCorrupt = parseAndVerify(packet)
+        if not isCorrupt:
             # check value of expected seq number against seq number received -
             # IN ORDER
             if(rcvpkt[0] == expectedseqnum):

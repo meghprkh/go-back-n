@@ -33,6 +33,8 @@ starttime = time.time()
 
 
 while True:
+    if endoffile:
+        break
 
     try:
         packet, clientAddress = serverSocket.recvfrom(4096)
@@ -40,7 +42,7 @@ while True:
         if not isCorrupt:
             # check value of expected seq number against seq number received -
             # IN ORDER
-            if(rcvpkt[0] == expectedseqnum):
+            if rcvpkt[0] == expectedseqnum:
                 print "Received inorder", expectedseqnum
                 if rcvpkt[1]:
                     f.write(rcvpkt[1])

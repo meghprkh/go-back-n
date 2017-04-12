@@ -39,7 +39,7 @@ lastackreceived = time.time()
 
 while not done or window:
     # check if the window is full	or EOF has reached
-    if(nextSeqnum < base + windowSize) and not done:
+    if (nextSeqnum < base + windowSize) and not done:
         # create packet(seqnum,data,checksum)
         sndpkt = []
         sndpkt.append(nextSeqnum)
@@ -51,9 +51,9 @@ while not done or window:
         # increment variable nextSeqnum
         nextSeqnum = nextSeqnum + 1
         # check if EOF has reached
-        if(not data):
+        if not data:
             done = True
-            # append packet to window
+        # append packet to window
         window.append(sndpkt)
         # read more data
         data = fileOpen.read(500)
@@ -67,6 +67,7 @@ while not done or window:
         c = rcvpkt[-1]
         del rcvpkt[-1]
         if c == getHash(rcvpkt):
+            # packet recieved not corrupt
             print "Received ack for", rcvpkt[0]
             # slide window and reset timer
             while rcvpkt[0] > base and window:
@@ -74,6 +75,7 @@ while not done or window:
                 del window[0]
                 base = base + 1
         else:
+            # packet recieved corrupt
             print "error detected"
     # TIMEOUT
     except:

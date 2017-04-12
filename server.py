@@ -32,6 +32,12 @@ endoffile = False
 lastpktreceived = time.time()
 starttime = time.time()
 
+def makeACK(expectedseqnum):
+    sndpkt = []
+    sndpkt.append(expectedseqnum)
+    sndpkt.append(getHash(sndpkt))
+    return sndpkt
+
 while True:
 
     try:
@@ -53,9 +59,7 @@ while True:
                     endoffile = True
                 expectedseqnum = expectedseqnum + 1
                 # create ACK (seqnum,checksum)
-                sndpkt = []
-                sndpkt.append(expectedseqnum)
-                sndpkt.append(getHash(sndpkt))
+                sndpkt = makeACK(expectedseqnum)
                 transmit(serverSocket, pickle.dumps(sndpkt),
                          clientAddress[0], clientAddress[1])
                 print "New Ack", expectedseqnum
@@ -64,9 +68,7 @@ while True:
                 # default? discard packet and resend ACK for most recently
                 # received inorder pkt
                 print "Received out of order", rcvpkt[0]
-                sndpkt = []
-                sndpkt.append(expectedseqnum)
-                sndpkt.append(getHash(sndpkt))
+                sndpkt = makeACK(expectedseqnum)
                 transmit(serverSocket, pickle.dumps(sndpkt),
                          clientAddress[0], clientAddress[1])
                 print "Ack", expectedseqnum

@@ -22,37 +22,31 @@ def transmit(csocket, message, serverName, serverPort):
             error = 2
 
         elif error == 2:
+            print 'Duplicated a packet No ' + str(counter)
+            csocket.sendto(message, (serverName, serverPort))
+
+            csocket.sendto(message, (serverName, serverPort))
+            error = 3
+
+        elif error == 3:
             if reorder == 1:
                 print 're-ordering a packet No ' + str(counter)
                 csocket.sendto(message, (serverName, serverPort))
                 csocket.sendto(dummy, (serverName, serverPort))
                 reorder = 0
                 counter = counter + 1
-                error = 3
+                error = 4
             else:
                 dummy = message
                 reorder = 1
                 counter = counter - 1
 
-        elif error == 3:
-            print 'Duplicated a packet No ' + str(counter)
-            csocket.sendto(message, (serverName, serverPort))
-
-            csocket.sendto(message, (serverName, serverPort))
-            error = 4
-
         elif error == 4:
             print 'creating packet errors packet No ' + str(counter)
-
             mylist = list(message)
-        # get last char of the string
+            # get last char of the string
             x = ord(mylist[-1])
-            if (x & 1) == 1:
-                # if first bit set, unset it
-                x &= ~(1)
-            else:
-                # if first bit not set, set it
-                x |= 1
+            x = x ^ 1
 
             mylist[-1] = chr(x)
             dummy = ''.join(mylist)

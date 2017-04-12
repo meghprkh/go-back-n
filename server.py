@@ -1,11 +1,11 @@
 #!/usr/bin/env python2
 
 import socket
-from transmit import transmit
 import pickle
-import hashlib
 import sys
 import time
+from transmit import transmit
+from utilities import getHash
 
 if len(sys.argv) < 2:
     print "Usage: ./server.py serverPort [timeout = 3]"
@@ -42,9 +42,7 @@ while True:
         # NOT CORRUPT
         c = rcvpkt[-1]
         del rcvpkt[-1]
-        h = hashlib.md5()
-        h.update(pickle.dumps(rcvpkt))
-        if c == h.digest():
+        if c == getHash(rcvpkt):
             # check value of expected seq number against seq number received -
             # IN ORDER
             if(rcvpkt[0] == expectedseqnum):
@@ -57,9 +55,7 @@ while True:
                 # create ACK (seqnum,checksum)
                 sndpkt = []
                 sndpkt.append(expectedseqnum)
-                h = hashlib.md5()
-                h.update(pickle.dumps(sndpkt))
-                sndpkt.append(h.digest())
+                sndpkt.append(getHash(sndpkt))
                 transmit(serverSocket, pickle.dumps(sndpkt),
                          clientAddress[0], clientAddress[1])
                 print "New Ack", expectedseqnum
@@ -70,9 +66,7 @@ while True:
                 print "Received out of order", rcvpkt[0]
                 sndpkt = []
                 sndpkt.append(expectedseqnum)
-                h = hashlib.md5()
-                h.update(pickle.dumps(sndpkt))
-                sndpkt.append(h.digest())
+                sndpkt.append(getHash(sndpkt))
                 transmit(serverSocket, pickle.dumps(sndpkt),
                          clientAddress[0], clientAddress[1])
                 print "Ack", expectedseqnum

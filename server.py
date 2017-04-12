@@ -1,7 +1,6 @@
 #!/usr/bin/env python2
 
 import socket
-import pickle
 import sys
 import time
 from transmit import transmit
@@ -50,7 +49,7 @@ while True:
                 expectedseqnum = expectedseqnum + 1
                 # create ACK (seqnum,checksum)
                 sndpkt = makeACK(expectedseqnum)
-                transmit(serverSocket, pickle.dumps(sndpkt),
+                transmit(serverSocket, sndpkt,
                          clientAddress[0], clientAddress[1])
                 print "New Ack", expectedseqnum
 
@@ -59,7 +58,7 @@ while True:
                 # received inorder pkt
                 print "Received out of order", rcvpkt[0]
                 sndpkt = makeACK(expectedseqnum)
-                transmit(serverSocket, pickle.dumps(sndpkt),
+                transmit(serverSocket, sndpkt,
                          clientAddress[0], clientAddress[1])
                 print "Ack", expectedseqnum
         else:

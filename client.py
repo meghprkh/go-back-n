@@ -1,7 +1,6 @@
 #!/usr/bin/env python2
 
 import socket
-import pickle
 import sys
 import time
 from transmit import transmit
@@ -43,7 +42,7 @@ while not done or window:
         # create packet(seqnum,data,checksum)
         sndpkt = makePkt(nextSeqnum, data)
         # send packet
-        transmit(clientSocket, pickle.dumps(sndpkt), serverName, serverPort)
+        transmit(clientSocket, sndpkt, serverName, serverPort)
         print "Sent data", nextSeqnum
         # increment variable nextSeqnum
         nextSeqnum = nextSeqnum + 1
@@ -75,7 +74,7 @@ while not done or window:
         if time.time() - lastackreceived > timeout:
             # Resend all packets in window
             for i in window:
-                transmit(clientSocket, pickle.dumps(i), serverName, serverPort)
+                transmit(clientSocket, i, serverName, serverPort)
 
 fileOpen.close()
 

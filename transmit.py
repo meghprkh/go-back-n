@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 
 from random import randint
+import pickle
 
 dummy = ' '
 reorder = 0
@@ -11,6 +12,7 @@ p = 5
 
 def transmit(csocket, message, serverName, serverPort):
     global counter, error, reorder, dummy, p
+    message = pickle.dumps(message)
     if (randint(1, p) % p) != 0:
         csocket.sendto(message, (serverName, serverPort))
         print 'Sends properly packet No ' + str(counter)

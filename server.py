@@ -41,7 +41,6 @@ def makeACK(expectedseqnum):
 while True:
 
     try:
-        rcvpkt = []
         packet, clientAddress = serverSocket.recvfrom(4096)
         rcvpkt, isCorrupt = parseAndVerify(packet)
         if not isCorrupt:

@@ -37,14 +37,16 @@ data = fileOpen.read(500)
 done = False
 lastackreceived = time.time()
 
+def makePkt(seqnum, data):
+    packet = [seqnum, data]
+    packet.append(getHash(packet))
+    return packet
+
 while not done or window:
     # check if the window is full	or EOF has reached
     if (nextSeqnum < base + windowSize) and not done:
         # create packet(seqnum,data,checksum)
-        sndpkt = []
-        sndpkt.append(nextSeqnum)
-        sndpkt.append(data)
-        sndpkt.append(getHash(sndpkt))
+        sndpkt = makePkt(nextSeqnum, data)
         # send packet
         transmit(clientSocket, pickle.dumps(sndpkt), serverName, serverPort)
         print "Sent data", nextSeqnum
@@ -76,6 +78,7 @@ while not done or window:
     # TIMEOUT
     except:
         if time.time() - lastackreceived > timeout:
+            # Resend all packets in window
             for i in window:
                 transmit(clientSocket, pickle.dumps(i), serverName, serverPort)
 

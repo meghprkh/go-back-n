@@ -18,7 +18,7 @@ timeout = float(sys.argv[2]) if len(sys.argv) > 2 else 0.01
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 serverSocket.bind((serverIP, serverPort))
 serverSocket.settimeout(timeout)
-print "Ready to serve"
+print "Server started. Waiting for client..."
 
 # initializes packet variables
 expectedseqnum = 1
@@ -43,7 +43,7 @@ while True:
             # check value of expected seq number against seq number received -
             # IN ORDER
             if rcvpkt[0] == expectedseqnum:
-                print "Received inorder", expectedseqnum
+                print "Received packet inorder #", expectedseqnum
                 if rcvpkt[1]:
                     f.write(rcvpkt[1])
                 else:
@@ -53,18 +53,18 @@ while True:
                 sndpkt = makeACK(expectedseqnum)
                 transmit(serverSocket, sndpkt,
                          clientAddress[0], clientAddress[1])
-                print "New Ack", expectedseqnum
+                print "Sending new Ack for #", expectedseqnum
 
             else:
                 # default? discard packet and resend ACK for most recently
                 # received inorder pkt
-                print "Received out of order", rcvpkt[0]
+                print "Error: Received out of order packet #", rcvpkt[0]
                 sndpkt = makeACK(expectedseqnum)
                 transmit(serverSocket, sndpkt,
                          clientAddress[0], clientAddress[1])
-                print "Ack", expectedseqnum
+                print "Sending Ack for #", expectedseqnum
         else:
-            print "error detected"
+            print "Error: corrupt packet received"
     except:
         if endoffile:
             # if we dont recieve any packet for 3 seconds then we terminate
@@ -76,5 +76,5 @@ while True:
 endtime = time.time()
 
 f.close()
-print 'FILE TRANFER SUCCESSFUL'
-print "TIME TAKEN ", str(endtime - starttime)
+print "\n\nSuccessfully transfered file"
+print str(endtime - starttime), "seconds taken."

@@ -43,7 +43,7 @@ while not done or window:
         sndpkt = makePkt(nextSeqnum, data)
         # send packet
         transmit(clientSocket, sndpkt, serverName, serverPort)
-        print "Sent data", nextSeqnum
+        print "Data sent #", nextSeqnum
         # increment variable nextSeqnum
         nextSeqnum = nextSeqnum + 1
         # check if EOF has reached
@@ -59,16 +59,16 @@ while not done or window:
         packet, serverAddress = clientSocket.recvfrom(4096)
         rcvpkt, isCorrupt = parseAndVerify(packet)
         if not isCorrupt:
-            # packet recieved not corrupt
-            print "Received ack for", rcvpkt[0]
+            # packet received not corrupt
+            print "Received ack for #", rcvpkt[0]
             # slide window and reset timer
             while rcvpkt[0] > base and window:
                 lastackreceived = time.time()
                 del window[0]
                 base = base + 1
         else:
-            # packet recieved corrupt
-            print "error detected"
+            # packet received corrupt
+            print "Error: corrupt packet received"
     # TIMEOUT
     except:
         if time.time() - lastackreceived > timeout:
@@ -78,5 +78,5 @@ while not done or window:
 
 fileOpen.close()
 
-print "connection closed"
+print "Connection closed"
 clientSocket.close()

@@ -15,16 +15,16 @@ def transmit(csocket, message, serverName, serverPort):
     message = pickle.dumps(message)
     if (randint(1, p) % p) != 0:
         csocket.sendto(message, (serverName, serverPort))
-        print 'Sends properly packet No ' + str(counter)
+        print 'UDT: Properly sent packet with number ' + str(counter)
 
     else:
         # Make some error with probability p
         if error == 1:
-            print 'Dropped a packet No ' + str(counter)
+            print 'UDT: Dropped a packet with number ' + str(counter)
             error = 2
 
         elif error == 2:
-            print 'Duplicated a packet No ' + str(counter)
+            print 'UDT: Duplicated a packet with number ' + str(counter)
             csocket.sendto(message, (serverName, serverPort))
 
             csocket.sendto(message, (serverName, serverPort))
@@ -32,7 +32,7 @@ def transmit(csocket, message, serverName, serverPort):
 
         elif error == 3:
             if reorder == 1:
-                print 're-ordering a packet No ' + str(counter)
+                print 'UDT: Re-ordering a packet with number ' + str(counter)
                 csocket.sendto(message, (serverName, serverPort))
                 csocket.sendto(dummy, (serverName, serverPort))
                 reorder = 0
@@ -44,7 +44,7 @@ def transmit(csocket, message, serverName, serverPort):
                 counter = counter - 1
 
         elif error == 4:
-            print 'creating packet errors packet No ' + str(counter)
+            print 'UDT: Creating corrupt packet with number ' + str(counter)
             mylist = list(message)
             # get last char of the string
             x = ord(mylist[-1])
